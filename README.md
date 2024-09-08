@@ -1,8 +1,9 @@
 ## Screenshot
-![Picture3](https://github.com/user-attachments/assets/a5a50d9a-fd80-4a13-a63f-873ae1de0765)
-![Picture2](https://github.com/user-attachments/assets/ab0837e0-1576-46aa-849a-e1aff3b95956)
-![Picture1](https://github.com/user-attachments/assets/5af3f491-de7f-48bb-adcc-e1347aa5c413)
 
+
+![SS3](https://github.com/user-attachments/assets/19949f35-7d22-4806-87e4-c7ecd23064d0)
+![SS2](https://github.com/user-attachments/assets/5b3a58ed-f13a-438f-a57e-c9cc974c5ac5)
+![SS1](https://github.com/user-attachments/assets/cb0c3f3a-3bfa-40ae-b563-965ead95a801)
 
 ##Prompting Strategy
 Provide a pre-defined prompt to the API which describes the bot’s purpose and what answers it has to generate. Also provided a template for the answer that the bot will produce. Describe various scenarios it can run into and how to handle them. Provided expectations for the answer but didn’t restrict its creativity. 
