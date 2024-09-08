@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Test Generator</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: antiquewhite;
+        }
+        .chat-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+        }
+        .chat-header {
+            background-color: #075e54;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .message {
+            max-width: 80%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .user-message {
+            background-color: #dcf8c6;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        .bot-message {
+            background-color: #86ecbd;
+        }
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+        #promptInput {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            margin-right: 10px;
+        }
+        #imageUpload {
+            display: none;
+        }
+        .upload-btn {
+            background-color: #128c7e;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button[type="submit"] {
+            background-color: #128c7e;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        #imagePreview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 10px;
+        }
+        .chat-messages img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>App Test Generator</h2>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">
+                Hello! I'm here to analyze your app's screenshot and analyze it's functions. Upload an image and ask me about it. 
+                <br><br>
+            </div>
+        </div>
+        <form id="uploadForm" class="chat-input">
+            <label for="imageUpload" class="upload-btn">Upload Image</label>
+            <input type="file" id="imageUpload" accept="image/*" required>
+            <input type="text" id="promptInput" placeholder="Ask about the image..." required>
+            <button type="submit">Send</button>
+        </form>
+        
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#imageUpload').change(function(e) {
+                var file = e.target.files[0];
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#chatMessages').append('<div class="message user-message"><img id="imagePreview" src="' + e.target.result + '" alt="Uploaded image"></div>');
+                    $('.chat-messages').scrollTop($('.chat-messages')[0].scrollHeight);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            $('#uploadForm').submit(function(e) {
+                e.preventDefault();
+                var userPrompt = $('#promptInput').val();
+                $('#chatMessages').append('<div class="message user-message">' + userPrompt + '</div>');
+                
+                var formData = new FormData();
+                formData.append('image', $('#imagePreview').attr('src'));
+                formData.append('prompt', userPrompt);
+
+                $.ajax({
+                    url: '/generate',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        $('#chatMessages').append('<div class="message bot-message">' + marked.parse(data.response) + '</div>');
+                        $('.chat-messages').scrollTop($('.chat-messages')[0].scrollHeight);
+                    },
+                    error: function() {
+                        $('#chatMessages').append('<div class="message bot-message">An error occurred.</div>');
+                        $('.chat-messages').scrollTop($('.chat-messages')[0].scrollHeight);
+                    }
+                });
+
+                $('#promptInput').val('');
+            });
+        });
+    </script>
+</body>
+</html>
