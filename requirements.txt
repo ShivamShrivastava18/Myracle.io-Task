@@ -1,0 +1,4 @@
+flask
+beautifulsoup4
+google.generativeai
+pillow
